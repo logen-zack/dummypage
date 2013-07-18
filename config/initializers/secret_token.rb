@@ -9,4 +9,19 @@
 
 # Make sure your secret_key_base is kept private
 # if you're sharing your code publicly.
-Dummypage::Application.config.secret_key_base = '96a5211b41549da6baa148eadb6862867f950a8b500be1e883850d2dcf99e0daee8249be74c989758db2a1c1801f77a3fdbe01cd9952896b23de96fe7978607d'
+require 'securerandom'
+
+def secure_token
+  token_file = Rails.root.join('.secret')
+  if File.exist?(token_file)
+    # Use the existing token.
+    File.read(token_file).chomp
+  else
+    # Generate a new token and store it in token_file.
+    token = SecureRandom.hex(64)
+    File.write(token_file, token)
+    token
+  end
+end
+
+Dummypage::Application.config.secret_key_base = secure_token
